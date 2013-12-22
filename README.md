@@ -20,4 +20,4 @@ version 0.3.0
 [Debug]-Le mode reconnexion en combat est désactivable via la config.
 
 #Black maps bug
-Execute the npcs_maps.sql batch file , and it will correct the bug
+Execute the <b>npcs_maps.sql</b> batch file , and it will correct the bug
