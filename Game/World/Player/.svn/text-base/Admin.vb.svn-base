@@ -1,0 +1,518 @@
+﻿Imports Vemu_gs.Game
+Imports Vemu_gs.Utils
+Imports MySql.Data.MySqlClient
+
+Namespace World
+    Public Class Admin
+
+        Public Const JAIL_MAP As Integer = 1002
+        Public Const JAIL_CELL As Integer = 197
+        Public Const SAFE_CELL As Integer = 385
+
+        Public Shared Sub BanAccount(ByVal AccountName As String, ByVal Unban As Boolean)
+
+            SyncLock Sql.AccountsSync
+
+                Dim SQLText As String = "UPDATE player_accounts SET banned=" & If(Unban, "0", "1") & " WHERE username=@AccountName"
+                Dim SQLCommand As New MySqlCommand(SQLText, Sql.Accounts)
+                SQLCommand.Parameters.Add(New MySqlParameter("@AccountName", AccountName))
+
+                SQLCommand.ExecuteNonQuery()
+
+            End SyncLock
+
+        End Sub
+
+        Public Shared Function AccountExist(ByVal AccountName As String) As Boolean
+
+            Try
+
+                SyncLock Sql.AccountsSync
+
+                    Dim SQLText As String = "SELECT * FROM player_accounts WHERE username=@AccountName"
+                    Dim SQLCommand As New MySqlCommand(SQLText, Sql.Accounts)
+                    SQLCommand.Parameters.Add(New MySqlParameter("@AccountName", AccountName))
+
+                    Dim Result As MySqlDataReader = SQLCommand.ExecuteReader
+
+                    If Result.Read Then
+                        Result.Close()
+                        Return True
+                    End If
+
+                    Result.Close()
+                    Return False
+
+                End SyncLock
+
+            Catch ex As Exception
+
+                Return False
+
+            End Try
+
+        End Function
+
+        Public Shared Sub AddItem(ByVal TheClient As GameClient, ByVal ItemID As Integer)
+
+            If ItemsHandler.ItemExist(ItemID) Then
+                Dim NewItem As Item = ItemsHandler.GetItemTemplate(ItemID).GenerateItem
+                TheClient.Character.Items.AddItem(TheClient, NewItem)
+                '  TheClient.ConsoleMessage("Item generated.")
+            Else
+                '  TheClient.ConsoleMessage("Unknown item " & ItemID & ".", 0)
+            End If
+
+        End Sub
+
+        Private Shared Sub AddItem(ByVal TheClient As GameClient, ByVal AutreClient As GameClient, ByVal ItemID As Integer, Optional ByVal MaxMin As Integer = 0)
+
+            If ItemsHandler.ItemExist(ItemID) Then
+                Dim NewItem As Item = ItemsHandler.GetItemTemplate(ItemID).GenerateItem(1, MaxMin)
+                AutreClient.Character.Items.AddItem(AutreClient, NewItem)
+                TheClient.ConsoleMessage("Item generated to " & AutreClient.Character.Name & ".")
+            Else
+                TheClient.ConsoleMessage("Unknown item " & ItemID & ".", 0)
+            End If
+
+        End Sub
+
+        Public Shared Sub Execute(ByVal Client As GameClient, ByVal Command As String, ByVal Parameters() As String, ByVal Parameter As String)
+
+            Try
+
+                If Client.Infos.GmLevel < 1 Then
+                    Exit Sub
+                End If
+
+                Dim ParamNum As Integer = Parameters.Length
+
+                Select Case Command
+
+                    Case "ban"
+                        If ParamNum >= 1 Then
+                            Dim KickClient As GameClient = World.Players.GetCharacter(Parameters(0))
+                            If Not KickClient Is Nothing Then
+                                If KickClient.Infos.GmLevel = 0 Then
+                                    Dim Raison As String = ""
+                                    If ParamNum >= 2 Then Raison = Parameter.Split(" ".ToCharArray, 2)(1)
+                                    KickClient.Send("M018|" & Client.Character.Name & "; " & Raison)
+                                    KickClient.Disconnect()
+
+                                    BanAccount(KickClient.AccountName, False)
+
+                                    Chat.SendAdministratorMessage(Client, "Le joueur <b>" & KickClient.Character.Name & "</b> a été banni du jeu." & If(Raison <> "", " (" & Raison & ")", ""))
+                                Else
+                                    Client.ConsoleMessage("You can't ban that player !", 0)
+                                End If
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(0) & "' doesn't exist.", 0)
+                            End If
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "unban"
+                        If ParamNum >= 1 Then
+                            If AccountExist(Parameters(0)) Then
+                                BanAccount(Parameters(0), True)
+                                Client.ConsoleMessage("Account " & Parameters(0) & " unbanned")
+                            Else
+                                Client.ConsoleMessage("Account '" & Parameters(0) & "' doesn't exist.", 0)
+                            End If
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "displayspell"
+                        If ParamNum = 2 Then
+
+                            Dim spell As Spell = SpellsHandler.ListOfSpells.FirstOrDefault(Function(s) s.AnimationId = Parameters(0))
+                            Dim sInfo As String() = spell.SpriteInfos.Split(",")
+                            Dim id As Integer
+
+                            If (Integer.TryParse(Parameters(1), id)) Then
+                                Client.Character.GetMap.Send("GA0;228;;" & id & "," & spell.AnimationId & "," & sInfo(0) & "," & sInfo(1) & ",5")
+                            Else
+                                Dim character As Character = Client.Character.GetMap.GetCharacter(Parameters(1)).Character
+                                Client.Character.GetMap.Send("GA0;228;;" & character.MapCell & "," & spell.AnimationId & "," & sInfo(0) & "," & sInfo(1) & ",5")
+                            End If
+                            Client.ConsoleMessage("Spell Displayed")
+                        Else
+                            Client.ConsoleMessage("Commande de la forme {gfxId} {IdPerso} ou {gfxId} {cellId}")
+                        End If
+
+                    Case "totalwar"
+                        If ParamNum = 1 Then
+                            Dim spell As Spell = SpellsHandler.GetSpell(Parameters(0))
+                            For Each oClient As GameClient In Client.Character.GetMap.ListGameCharacter
+                                Client.Character.GetMap.Send("GA0;228;;" & oClient.Character.MapCell & "," & spell.SpellId & "," & spell.SpriteInfos)
+                            Next
+                        Else
+                            Client.ConsoleMessage("Commande de la forme {spellId}")
+                        End If
+
+                    Case "all"
+                        If ParamNum >= 1 Then
+                            Chat.SendAdministratorMessage(Client, Parameter)
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "map"
+                        If ParamNum >= 1 Then
+                            Chat.SendAdministratorMapMessage(Client, Parameter)
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "launchtournament"
+                        If Parameters.Count < 2 Then
+                            Dim time As Integer = Parameters(0)
+                            Dim maps As List(Of Map) = New List(Of Map)(Parameters.Length)
+                            For i As Integer = 1 To Parameters.Length - 1
+                                maps.Add(MapsHandler.GetMap(Parameters(i)))
+                            Next
+                            TournamentManager.Tournaments.Add(New Tournament(Client, time, maps))
+                        Else
+                            Client.SendMessage("La commande est de la forme {time in s} {map1} {map2} .. {map-n}")
+                        End If
+
+                    Case "packet"
+                        Client.Send(Parameters(0))
+
+                    Case "addhonor"
+                        Client.ConsoleMessage("You have gived " & Parameter & " honnors points to you")
+                        Client.Character.Player.Alignment.AddExp(Client, Parameter)
+                        Client.Character.SendAccountStats()
+
+                    Case "whois"
+                        If ParamNum >= 1 Then
+                            Dim WhoisClient As GameClient = World.Players.GetCharacter(Parameters(0))
+                            If Not WhoisClient Is Nothing Then
+                                Dim Infos As String = _
+                                    String.Format("{0} ({1}), IP: {2}, Level: {3}", _
+                                           WhoisClient.Character.Name, _
+                                           WhoisClient.AccountName, _
+                                           WhoisClient.Ip, _
+                                           WhoisClient.Character.Player.Level)
+                                Client.ConsoleMessage(Infos)
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(0) & "' doesn't exist.", 0)
+                            End If
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "kick"
+                        If ParamNum >= 1 Then
+                            Dim KickClient As GameClient = World.Players.GetCharacter(Parameters(0))
+                            If Not KickClient Is Nothing Then
+                                If KickClient.Infos.GmLevel = 0 Then
+                                    Dim Raison As String = ""
+                                    If ParamNum >= 2 Then Raison = Parameter.Split(" ".ToCharArray, 2)(1)
+                                    KickClient.Send("M018|" & Client.Character.Name & "; " & Raison)
+                                    KickClient.Disconnect()
+
+                                    Chat.SendAdministratorMessage(Client, "Le joueur <b>" & KickClient.Character.Name & "</b> a été exclu du jeu." & If(Raison <> "", " (" & Raison & ")", ""))
+                                Else
+                                    Client.ConsoleMessage("You can't kick that player !", 0)
+                                End If
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(0) & "' doesn't exist.", 0)
+                            End If
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "morph"
+                        If ParamNum >= 2 Then
+                            Dim MorphClient As GameClient = World.Players.GetCharacter(Parameters(1))
+                            If Not MorphClient Is Nothing Then
+                                MorphClient.Character.Skin = Parameters(0)
+                                MorphClient.Character.GetMap.RefreshCharacter(MorphClient)
+                            End If
+                        ElseIf ParamNum >= 1 Then
+                            Client.Character.Skin = Parameters(0)
+                            Client.Character.GetMap.RefreshCharacter(Client)
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "size"
+                        If ParamNum >= 2 Then
+                            Dim MorphClient As GameClient = World.Players.GetCharacter(Parameters(1))
+                            If Not MorphClient Is Nothing Then
+                                MorphClient.Character.Size = Parameters(0)
+                                MorphClient.Character.GetMap.RefreshCharacter(MorphClient)
+                            End If
+                        ElseIf ParamNum >= 1 Then
+                            Client.Character.Size = Parameters(0)
+                            Client.Character.GetMap.RefreshCharacter(Client)
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "demorph"
+                        If ParamNum >= 1 Then
+                            Dim MorphClient As GameClient = World.Players.GetCharacter(Parameters(0))
+                            If Not MorphClient Is Nothing Then
+                                MorphClient.Character.Skin = MorphClient.Character.Classe & MorphClient.Character.Sexe
+                                MorphClient.Character.GetMap.RefreshCharacter(MorphClient)
+                            End If
+                        Else
+                            Client.Character.Skin = Client.Character.Classe & Client.Character.Sexe
+                            Client.Character.GetMap.RefreshCharacter(Client)
+                        End If
+
+                    Case "align"
+                        If ParamNum >= 2 Then
+                            Dim AlignClient As GameClient = World.Players.GetCharacter(Parameters(1))
+                            If Not AlignClient Is Nothing Then
+                                If IsNumeric(Parameters(0)) AndAlso Parameters(0) > 0 AndAlso Parameters(0) < 4 Then
+                                    AlignClient.Character.Player.Alignment.ResetAll()
+                                    AlignClient.Character.Player.Alignment.Id = Parameters(0)
+                                    AlignClient.Character.SendAccountStats()
+                                    Client.ConsoleMessage(AlignClient.Character.Name & "'s alignment is now " & Parameters(0))
+                                Else
+                                    Client.ConsoleMessage("Invalid syntax.", 1)
+                                End If
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(1) & "' doesn't exist.", 0)
+                            End If
+                        ElseIf ParamNum >= 1 Then
+                            If IsNumeric(Parameters(0)) AndAlso Parameters(0) > 0 AndAlso Parameters(0) < 4 Then
+                                Client.Character.Player.Alignment.ResetAll()
+                                Client.Character.Player.Alignment.Id = Parameters(0)
+                                Client.Character.SendAccountStats()
+                                Client.ConsoleMessage("Your alignment is now " & Parameters(0))
+                            Else
+                                Client.ConsoleMessage("Invalid syntax.", 1)
+                            End If
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "noalign"
+                        If ParamNum >= 1 Then
+                            Dim AlignClient As GameClient = World.Players.GetCharacter(Parameters(0))
+                            If Not AlignClient Is Nothing Then
+                                AlignClient.Character.Player.Alignment.ResetAll()
+                                AlignClient.Character.SendAccountStats()
+                                Client.ConsoleMessage(AlignClient.Character.Name & "'s alignment was deleted")
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(0) & "' doesn't exist.", 0)
+                            End If
+                        Else
+                            Client.Character.Player.Alignment.ResetAll()
+                            Client.Character.SendAccountStats()
+                            Client.ConsoleMessage("Your alignment was deleted")
+                        End If
+
+                    Case "infos"
+                        Client.ConsoleMessage("Vemu v" & MyConsole.GetVersion & " by NightWolf")
+                        Client.ConsoleMessage(Players.GetPlayerCount & " players connected to game server.")
+                        Client.ConsoleMessage("Uptime : " & Basic.GetUptime)
+
+                    Case "save"
+                        Dim ThreadSave As New Threading.Thread(AddressOf Save.Save)
+                        ThreadSave.Start()
+
+                    Case "item"
+                        If ParamNum >= 3 Then
+                            Dim ItemClient As GameClient = Players.GetCharacter(Parameters(1))
+                            If Not ItemClient Is Nothing Then
+                                Dim ItemID As Integer = Parameters(0)
+                                If Parameters(2).ToUpper = "MAX" Then
+                                    AddItem(Client, ItemClient, ItemID, 1)
+                                ElseIf Parameters(2).ToUpper = "MIN" Then
+                                    AddItem(Client, ItemClient, ItemID, 2)
+                                Else
+                                    AddItem(Client, ItemClient, ItemID)
+                                End If
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(1) & "' doesn't exist.", 0)
+                            End If
+                        ElseIf ParamNum >= 2 Then
+                            Dim ItemClient As GameClient = Players.GetCharacter(Parameters(1))
+                            If Not ItemClient Is Nothing Then
+                                Dim ItemID As Integer = Parameters(0)
+                                AddItem(Client, ItemClient, ItemID)
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(1) & "' doesn't exist.", 0)
+                            End If
+                        ElseIf ParamNum >= 1 Then
+                            Dim ItemID As Integer = Parameters(0)
+                            AddItem(Client, ItemID)
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "spell"
+                        If ParamNum >= 3 Then
+                            Dim ToAddClient As GameClient = Players.GetCharacter(Parameters(2))
+                            If Not ToAddClient Is Nothing Then
+                                ToAddClient.Character.Spells.AddSpell(Parameters(0), Parameters(1))
+                                Client.ConsoleMessage("Spell added to " & ToAddClient.Character.Name & ".")
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(2) & "' doesn't exist.", 0)
+                            End If
+                        ElseIf ParamNum >= 2 Then
+                            Client.Character.Spells.AddSpell(Parameters(0), Parameters(1))
+                            Client.ConsoleMessage("Spell added.")
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "watch"
+                        If ParamNum >= 1 Then
+
+                            Dim ToWatchClient As GameClient = Players.GetCharacter(Parameters(0))
+                            If Not ToWatchClient Is Nothing Then
+                                If Not ToWatchClient.Infos.GmLevel > 0 Then
+                                    Client.ConsoleMessage("Player " & ToWatchClient.Character.Name & " is now watched.")
+                                    ToWatchClient.Character.WatchedBy = Client
+                                Else
+                                    Client.ConsoleMessage("Player '" & Parameters(0) & "' can't be watched.", 0)
+                                End If
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(0) & "' doesn't exist.", 0)
+                            End If
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "unwatch"
+                        If ParamNum >= 1 Then
+
+                            Dim ToWatchClient As GameClient = Players.GetCharacter(Parameters(0))
+                            If Not ToWatchClient Is Nothing Then
+                                Client.ConsoleMessage("Player " & ToWatchClient.Character.Name & " is no longer watched.")
+                                ToWatchClient.Character.WatchedBy = Nothing
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(0) & "' doesn't exist.", 0)
+                            End If
+
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "teleto"
+                        If ParamNum >= 1 Then
+
+                            Dim FromClient As GameClient = Players.GetCharacter(Parameters(0))
+                            If Not FromClient Is Nothing Then
+                                Client.Character.TeleportTo(FromClient.Character.MapId, FromClient.Character.MapCell)
+                                Client.ConsoleMessage("Teleported to " & FromClient.Character.Name & " position.")
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(0) & "' doesn't exist.", 0)
+                            End If
+
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "teleme"
+                        If ParamNum >= 1 Then
+
+                            Dim FromClient As GameClient = Players.GetCharacter(Parameters(0))
+                            If Not FromClient Is Nothing Then
+                                If Not FromClient.Character.State.Occuped Then
+                                    FromClient.Character.TeleportTo(Client.Character.MapId, Client.Character.MapCell)
+                                    Client.ConsoleMessage("Teleported " & FromClient.Character.Name & " to you.")
+                                Else
+                                    Client.ConsoleMessage("Player '" & Parameters(0) & "' is busy.", 0)
+                                End If
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(0) & "' doesn't exist.", 0)
+                            End If
+
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "teleport"
+                        If ParamNum >= 3 Then
+
+                            Dim MapId As Integer = Parameters(0)
+                            Dim CellId As Integer = Parameters(1)
+                            Client.Character.TeleportTo(MapId, CellId)
+
+                        ElseIf ParamNum >= 2 Then
+
+                            Dim MapId As Integer = Parameters(0)
+                            Dim CellId As Integer = Parameters(1)
+                            Client.Character.TeleportTo(MapId, CellId)
+
+                        ElseIf ParamNum >= 1 Then
+
+                            Dim MapId As Integer = Parameters(0)
+                            Client.Character.TeleportTo(MapId, Client.Character.MapCell)
+
+                        Else
+                            Client.ConsoleMessage("Invalid syntax.", 1)
+                        End If
+
+                    Case "jail"
+                        If ParamNum >= 1 Then
+
+                            Dim FromClient As GameClient = Players.GetCharacter(Parameters(0))
+                            If Not FromClient Is Nothing Then
+                                If Not FromClient.Character.State.Occuped Then
+                                    FromClient.Character.TeleportTo(JAIL_MAP, JAIL_CELL)
+                                    Client.ConsoleMessage("Teleported " & FromClient.Character.Name & " to jail.")
+                                Else
+                                    Client.ConsoleMessage("Player '" & Parameters(0) & "' is busy.", 0)
+                                End If
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(0) & "' doesn't exist.", 0)
+                            End If
+
+                        Else
+
+                            Client.ConsoleMessage("You are teleported to jail.")
+                            Client.Character.TeleportTo(JAIL_MAP, SAFE_CELL)
+
+                        End If
+
+                    Case "unjail"
+                        If ParamNum >= 1 Then
+
+                            Dim FromClient As GameClient = Players.GetCharacter(Parameters(0))
+                            If Not FromClient Is Nothing Then
+                                If Not FromClient.Character.State.Occuped Then
+                                    If FromClient.Character.MapId = JAIL_MAP Then
+                                        FromClient.Character.TeleportTo(Config.GetItem("START_MAP"), Config.GetItem("START_CELL"))
+                                        Client.ConsoleMessage("Teleported " & FromClient.Character.Name & " to safe area.")
+                                    Else
+                                        Client.ConsoleMessage("Player '" & Parameters(0) & "' isn't in jail.", 0)
+                                    End If
+                                Else
+                                    Client.ConsoleMessage("Player '" & Parameters(0) & "' is busy.", 0)
+                                End If
+                            Else
+                                Client.ConsoleMessage("Player '" & Parameters(0) & "' doesn't exist.", 0)
+                            End If
+
+                        Else
+
+                            Client.ConsoleMessage("You are teleported to a safe area.")
+                            Client.Character.TeleportTo(Config.GetItem("START_MAP"), Config.GetItem("START_CELL"))
+
+                        End If
+
+                    Case Else
+                        Client.ConsoleMessage("Unknown command.", 1)
+
+                End Select
+
+            Catch ex As Exception
+                MyConsole.Err("Exception on @" & Client.Character.Name & "@'s admin cmd '@" & Command & "@' : " & ex.Message)
+                MyConsole.Err(ex.ToString)
+                Client.ConsoleMessage("Invalid syntax", 1)
+            End Try
+
+        End Sub
+
+    End Class
+End Namespace

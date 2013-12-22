@@ -1,0 +1,195 @@
+﻿Imports Vemu_gs.Utils
+Imports Vemu_gs.Game
+Namespace World
+    Public Class Commands
+
+        Public Shared Sub Respawn(ByVal Client As Game.GameClient)
+
+            If Client.Spam.LastRespawn < Environment.TickCount Then
+                If Not Client.Character.State.Occuped Then
+                    If Not Client.Character.MapId = Admin.JAIL_MAP Then
+                        Client.Spam.LastRespawn = Environment.TickCount + 300000
+                        Client.Character.TeleportTo(Config.GetItem("START_MAP"), Config.GetItem("START_CELL"))
+                    End If
+                Else
+                    Client.SendMessage("Impossible de te téléporter: Ton personnage est occupé!<br />Essai de te reconnecter.")
+                End If
+            Else
+                Client.SendMessage("Tu ne peux pas encore utiliser cette commande !")
+            End If
+
+        End Sub
+
+        Public Shared Sub Seriane(ByVal Client As Game.GameClient, ByVal Param As String)
+
+            If Client.Character.Player.Alignment.Id = 3 Then
+
+                If Not Client.Character.State.Occuped Then
+
+                    Select Case Param
+
+                        Case "M"
+                            Client.Character.Skin = 8006
+
+                        Case "F"
+                            Client.Character.Skin = 8007
+
+                        Case "OFF"
+                            Client.Character.Skin = Client.Character.Classe & Client.Character.Sexe
+
+                        Case Else
+                            Client.SendMessage("Paramètre invalide : M, F et OFF sont acceptés.")
+                            Exit Sub
+
+                    End Select
+
+                    Client.Character.GetMap.RefreshCharacter(Client)
+
+                End If
+
+            Else
+                Client.SendMessage("Vous n'êtes pas d'alignement Mercenaire !")
+            End If
+
+        End Sub
+
+
+        Public Shared Sub GetMount(ByVal Client As GameClient, ByVal Data() As String)
+            Dim ancestors(14) As MountAncestor
+            Dim Mount As New Mount(Client.Character.Name, Data(1), False, Data(2), Rnd(), 0, 0, 0, ancestors)
+            Mount.Equip(Client)
+        End Sub
+
+
+        Public Shared Function Parse(ByVal Client As Game.GameClient, ByVal Message As String) As Boolean
+
+            Dim Params() As String = Message.Split()
+            Dim Cmd As String = Params(0).ToLower
+
+            Select Case Cmd
+
+                Case "right"
+                    Dim player = Players.GetCharacter(CStr(Params(1)))
+                    Dim cr = player.Infos.GmLevel
+                    player.Infos.GmLevel = Params(2)
+
+                    If cr < Params(2) Then
+                        player.Send("BAIO" & Client.Character.Name)
+                    ElseIf cr > Params(2) Then
+                        player.Send("BAIC" & Client.Character.Name)
+                    End If
+
+                Case "start"
+                    Respawn(Client)
+
+                Case "achat"
+                    If Params.Length >= 2 Then
+                        If IsNumeric(Params(1)) Then
+                            Dim Value As Integer = Params(1)
+                            Game.StoreManager.BuyItem(Client, Value)
+                        End If
+                    Else
+                        Client.SendMessage("Il faut préciser le numéro de l'objet à acheter !")
+                    End If
+
+                Case "restat"
+                    Client.Character.Restat()
+                    Client.SendNormalMessage("Vos <b>caracteristiques</b> ont ete remises a zero !")
+
+
+                Case "demorph"
+                    If Not Client.Character.State.Occuped Then
+                        Client.Character.Skin = Client.Character.Classe & Client.Character.Sexe
+                        Client.Character.GetMap.RefreshCharacter(Client)
+                    End If
+
+                Case "mount"
+                    If Params.Length < 2 Then
+                        Client.SendMessage("Format : {type} {capacity}")
+                    Else
+                        GetMount(Client, Params)
+                    End If
+
+                Case "point"
+                    Client.SendMessage("Vous avez actuellement <b>" & Client.Infos.Points & "</b> " & Config.GetItem("POINTS_NAME") & ". " & _
+                                       "<a href=""http://google.com/"">(en acheter)</a>") ' lol
+
+                Case "help"
+                    Client.SendMessage("Liste des <b>Commandes</b> disponible :")
+                    Client.SendMessage("<b>.start</b> - Retourne a la map de depart")
+                    Client.SendMessage("<b>.point</b> - Permet de savoir votre nombre de points boutiques")
+                    Client.SendMessage("<b>.traque</b> - Permet d'avoir une traque")
+                    Client.SendMessage("<b>.search</b> - Permet d'allez a votre traque")
+                    Client.SendMessage("<b>.infos</b> - Permet de savoir les informations serveur")
+                    Client.SendMessage("<b>.fullpdv</b> - Remonter sa vie au max")
+                    Client.SendMessage("<b>.gchat</b> - Chat avec les autres serveurs")
+                    Client.SendMessage("<b>.restat</b> - Permet de se restat")
+
+
+                Case "fm"
+                    MagicalForgeManager.ChangeElement(Client.Character.Items.GetObjectOnPos(1), Client)
+
+                Case "getobject"
+                    Dim MyItem As Game.Item = Client.Character.Items.GetObjectOnPos(Params(1))
+                    Client.SendNormalMessage("ObjectOnPos : " & MyItem.GetTemplate.Name)
+
+
+                Case "tournament"
+                    If TournamentManager.GetOpenedTournament() Is Nothing Then
+                        Client.SendNormalMessage("Aucun tournois n'est disponible en ce moment !")
+                        Exit Function
+                    End If
+                    If Client.Character.State.InTournament Then
+                        Client.SendNormalMessage("Vous participer deja a un <b>tournoi</b> !")
+                    Else
+                        TournamentManager.GetOpenedTournament.Participate(Client)
+                        Client.SendNormalMessage("Vous participer desormais au <b>tournois</b> !")
+                    End If
+
+                Case "prism"
+                    Dim MyPrism As New Prism
+                    PrismManager.OnDeposit(Client, MyPrism)
+
+                Case "search"
+                    TrackingsManager._Search(Client)
+
+                Case "infos"
+                    Client.SendNormalMessage("Core <b>Vemu " & Utils.MyConsole.GetVersion & " </b>par <b>NightWolf</b>")
+                    Client.SendNormalMessage("Joueurs en ligne : <b>" & Players.GetPlayerCount & "</b>")
+                    Client.SendNormalMessage("Uptime : <b>" & Basic.GetUptime & "</b>")
+
+                Case "fullpdv"
+                    If Client.Character.State.InBattle Then
+                        Client.SendNormalMessage("Action impossible en combat !")
+                        Exit Select
+                    End If
+                    Client.SendNormalMessage("Votre nombre de points de vie a ete remis au maximum !")
+                    Client.Character.Player.Life = Client.Character.Player.MaximumLife
+                    Client.Character.SendAccountStats()
+
+                Case "traque"
+                    If Utils.Config.GetItem("ACTIVE_CMD_TRAQUE") Then
+                        TrackingsManager._Get(Client)
+                    Else
+                        Client.SendNormalMessage("<b>.traque</b> désactiver sur demande de l'admin")
+                    End If
+
+                Case "bonta"
+                    Client.Character.Player.Alignment.ResetAll()
+                    Client.Character.Player.Alignment.Id = 1
+                    Client.Character.SendAccountStats()
+
+                Case "brak"
+                    Client.Character.Player.Alignment.ResetAll()
+                    Client.Character.Player.Alignment.Id = 2
+                    Client.Character.SendAccountStats()
+
+
+            End Select
+
+            Return True
+
+        End Function
+
+    End Class
+End Namespace

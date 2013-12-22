@@ -1,0 +1,419 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DD5FF0D6-214B-4D83-B16A-324FCCD48908}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <StartupObject>Podemu.Main</StartupObject>
+    <RootNamespace>Podemu</RootNamespace>
+    <AssemblyName>PODEmu - GameServer</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>Console</MyType>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>C:\Users\hamza\Desktop\Navemu basé sur vemu by invic\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
+    <NoWarn>41999,42016,42017,42018,42019,42032,42036,42353,42354,42355</NoWarn>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RemoveIntegerChecks>true</RemoveIntegerChecks>
+    <Optimize>false</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
+    <WarningsAsErrors>42020,42021,42022,42024,42099</WarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
+    <NoWarn>41999,42016,42017,42018,42019,42032,42036,42353,42354,42355</NoWarn>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <WarningsAsErrors>42020,42021,42022,42024,42099</WarningsAsErrors>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>pod.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>D9FABD2B4227513EADD18182953F8F3BF5B4B163</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>Vemu_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MySql.Data">
+      <HintPath>..\..\VEMU\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Game\Actions\Action.vb" />
+    <Compile Include="Game\Actions\ActionHandler.vb" />
+    <Compile Include="Game\Actions\ActionEnum.vb" />
+    <Compile Include="Game\Actions\GiveLifeAction.vb" />
+    <Compile Include="Game\Actions\SerializedAction.vb" />
+    <Compile Include="Game\Actions\GiveItemAction.vb" />
+    <Compile Include="Game\Actions\SerializedActionList.vb" />
+    <Compile Include="Game\Amis\AmiManager.vb" />
+    <Compile Include="Game\Banque\BankHandler.vb" />
+    <Compile Include="Game\Banque\BankParser.vb" />
+    <Compile Include="Game\Cadeaux\CadeauxManager.vb" />
+    <Compile Include="Game\Challenges\ChallengeHandler.vb" />
+    <Compile Include="Game\Challenges\Challenge.vb" />
+    <Compile Include="Game\Challenges\Abnegation.vb" />
+    <Compile Include="Game\Challenges\Anachorete.vb" />
+    <Compile Include="Game\Challenges\Barbare.vb" />
+    <Compile Include="Game\Challenges\Circulez.vb" />
+    <Compile Include="Game\Challenges\Collant.vb" />
+    <Compile Include="Game\Challenges\Hardi.vb" />
+    <Compile Include="Game\Challenges\Econome.vb" />
+    <Compile Include="Game\Challenges\Sursis.vb" />
+    <Compile Include="Game\Challenges\Statue.vb" />
+    <Compile Include="Game\Challenges\DesigneVolontaire.vb" />
+    <Compile Include="Game\Challenges\PerduDeVue.vb" />
+    <Compile Include="Game\Challenges\Petulant.vb" />
+    <Compile Include="Game\Challenges\Survivant.vb" />
+    <Compile Include="Game\Challenges\Versatile.vb" />
+    <Compile Include="Game\Challenges\Zombie.vb" />
+    <Compile Include="Game\Client\AbstractClient.vb" />
+    <Compile Include="Game\Client\Bandit.vb" />
+    <Compile Include="Game\Client\CharacterCheckExp.vb" />
+    <Compile Include="Game\Client\Character.vb" />
+    <Compile Include="Game\Client\CharacterAlignment.vb" />
+    <Compile Include="Game\Client\CharacterEmotes.vb" />
+    <Compile Include="Game\Client\CharacterJob.vb" />
+    <Compile Include="Game\Client\CharacterMobsSuiveurs.vb" />
+    <Compile Include="Game\Client\CharacterQuests.vb" />
+    <Compile Include="Game\Client\CharactersManager.vb" />
+    <Compile Include="Game\Client\CharacterSpells.vb" />
+    <Compile Include="Game\Client\CharacterState.vb" />
+    <Compile Include="Game\Client\CharacterItems.vb" />
+    <Compile Include="Game\Client\CharacterRestriction.vb" />
+    <Compile Include="Game\Client\Characterniveau.vb" />
+    <Compile Include="Game\Client\CloneObject.vb" />
+    <Compile Include="Game\Coffre\Coffre.vb" />
+    <Compile Include="Game\Faction\Prism\PrismHandler.vb" />
+    <Compile Include="Game\Faction\Prism\PrismTemplate.vb" />
+    <Compile Include="Game\Hdvs\Hdvs.vb" />
+    <Compile Include="Game\Interactives\Zaapis.vb" />
+    <Compile Include="Game\jobs\job.vb" />
+    <Compile Include="Game\Migration\Migration.vb" />
+    <Compile Include="Game\MobsSuiveurs\MobsSuiveursManager.vb" />
+    <Compile Include="Game\MobsSuiveurs\MobSuiveur.vb" />
+    <Compile Include="Game\MobsSuiveurs\MobSuiveurTemplate.vb" />
+    <Compile Include="Game\Paddocks\PaddockHandler.vb" />
+    <Compile Include="Game\Paddocks\PaddockTemplate.vb" />
+    <Compile Include="Game\Dungeon\DungeonsHandler.vb" />
+    <Compile Include="Game\Exchange\Exchanger.vb" />
+    <Compile Include="Game\Gifts\GiftTemplate.vb" />
+    <Compile Include="Game\Gifts\GiftsHandler.vb" />
+    <Compile Include="Game\Quest\Quest.vb" />
+    <Compile Include="Game\Quest\QuestManager.vb" />
+    <Compile Include="Game\Quest\QuestObjectif.vb" />
+    <Compile Include="Game\Quest\QuestStep.vb" />
+    <Compile Include="Game\Storages\IStorage.vb" />
+    <Compile Include="Game\Interactives\Poubelle.vb" />
+    <Compile Include="Game\Interactives\Phenix.vb" />
+    <Compile Include="Game\Interactives\Zaap.vb" />
+    <Compile Include="Game\Merchants\MerchantBag.vb" />
+    <Compile Include="Game\Dungeon\Dungeon.vb" />
+    <Compile Include="Game\Faction\Prism\Prism.vb" />
+    <Compile Include="Game\Faction\Prism\PrismManager.vb" />
+    <Compile Include="Game\Interactives\Porte_Enclos.vb" />
+    <Compile Include="Game\Interactives\InteractiveHandler.vb" />
+    <Compile Include="Game\Interactives\InteractiveObject.vb" />
+    <Compile Include="Game\Interactives\Puit.vb" />
+    <Compile Include="Game\Items\PricedItem.vb" />
+    <Compile Include="Game\Mounts\MountsHandler.vb" />
+    <Compile Include="Game\Mounts\MountTemplate.vb" />
+    <Compile Include="Game\Npcs\QuestionNPC.vb" />
+    <Compile Include="Game\Npcs\ResponseNPC.vb" />
+    <Compile Include="Game\Merchants\Merchant.vb" />
+    <Compile Include="Game\Sentences\SentencesHandler.vb" />
+    <Compile Include="Game\Sentences\SentenceType.vb" />
+    <Compile Include="Game\Spells\Effect.vb" />
+    <Compile Include="Game\Exchange\Exchange.vb" />
+    <Compile Include="Game\Exchange\ExchangeItem.vb" />
+    <Compile Include="Game\Experience\ExperienceFloor.vb" />
+    <Compile Include="Game\Experience\ExperienceTable.vb" />
+    <Compile Include="Game\GamePing.vb" />
+    <Compile Include="Game\GameSpam.vb" />
+    <Compile Include="Game\Items\Item.vb" />
+    <Compile Include="Game\Items\ItemConditions.vb" />
+    <Compile Include="Game\Items\ItemEffect.vb" />
+    <Compile Include="Game\Items\ItemSetEffect.vb" />
+    <Compile Include="Game\Items\ItemSetTemplate.vb" />
+    <Compile Include="Game\Items\ItemsHandler.vb" />
+    <Compile Include="Game\Items\ItemTemplate.vb" />
+    <Compile Include="Game\Monsters\Monster.vb" />
+    <Compile Include="Game\Monsters\MonsterGroup.vb" />
+    <Compile Include="Game\Monsters\MonsterIA.vb" />
+    <Compile Include="Game\Monsters\MonsterLevel.vb" />
+    <Compile Include="Game\Monsters\MonstersHandler.vb" />
+    <Compile Include="Game\Monsters\MonsterTemplate.vb" />
+    <Compile Include="Game\Npcs\Npc.vb" />
+    <Compile Include="Game\Npcs\NpcDialog.vb" />
+    <Compile Include="Game\Npcs\NpcsHandler.vb" />
+    <Compile Include="Game\Npcs\NpcTemplate.vb" />
+    <Compile Include="Game\Party\Party.vb" />
+    <Compile Include="Game\Login\RealmSocket.vb" />
+    <Compile Include="Game\Spells\Spell.vb" />
+    <Compile Include="Game\Spells\SpellEffect.vb" />
+    <Compile Include="Game\Spells\SpellEffectScore.vb" />
+    <Compile Include="Game\Spells\SpellLearn.vb" />
+    <Compile Include="Game\Spells\SpellLevel.vb" />
+    <Compile Include="Game\Spells\SpellsHandler.vb" />
+    <Compile Include="Game\Spells\SpellTarget.vb" />
+    <Compile Include="Game\Stats\Stats.vb" />
+    <Compile Include="Game\Stats\StatsBase.vb" />
+    <Compile Include="Game\Stats\StatsDamage.vb" />
+    <Compile Include="Game\Stats\StatsPlayer.vb" />
+    <Compile Include="Game\Stats\StatsRow.vb" />
+    <Compile Include="Game\GameClient.vb" />
+    <Compile Include="Game\GameParser.vb" />
+    <Compile Include="Game\GameState.vb" />
+    <Compile Include="Game\Login\LoginKey.vb" />
+    <Compile Include="Game\Login\LoginInfos.vb" />
+    <Compile Include="Game\Stats\StatsArmor.vb" />
+    <Compile Include="Game\Stats\StatsResistance.vb" />
+    <Compile Include="Game\Storages\Storage.vb" />
+    <Compile Include="Game\Store\StoreItem.vb" />
+    <Compile Include="Game\SubAreas\SubAreaTemplate.vb" />
+    <Compile Include="Game\SubAreas\SubAreasHandler.vb" />
+    <Compile Include="Game\Vip\VipManager.vb" />
+    <Compile Include="Game\Zaapis\ZaapisManager.vb" />
+    <Compile Include="Game\Zaapis\ZaapisTemplate.vb" />
+    <Compile Include="Game\Zaaps\ZaapTemplate.vb" />
+    <Compile Include="Game\Zaaps\ZaapsHandler.vb" />
+    <Compile Include="Form1.Designer.vb">
+      <DependentUpon>Form1.vb</DependentUpon>
+    </Compile>
+    <None Include="Form1.vb">
+      <SubType>Form</SubType>
+    </None>
+    <Compile Include="Main.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Server\GameServer.vb" />
+    <Compile Include="Server\RealmLink.vb" />
+    <Compile Include="Server\TCPServer.vb" />
+    <Compile Include="Server\BazSocket.vb" />
+    <Compile Include="Server\UselessServer.vb" />
+    <Compile Include="Game\Faction\Track\TrackingsManager.vb" />
+    <Compile Include="Utils\BooleanByte.vb" />
+    <Compile Include="Utils\CachedPattern.vb" />
+    <Compile Include="Utils\Cells.vb" />
+    <Compile Include="Utils\CellsGenerator.vb" />
+    <Compile Include="Utils\Compressor.vb" />
+    <Compile Include="Utils\ConcurrentList.vb" />
+    <Compile Include="Utils\Config.vb" />
+    <Compile Include="Utils\Extension.vb" />
+    <Compile Include="Utils\LangReader.vb" />
+    <Compile Include="Utils\Encoding.vb" />
+    <Compile Include="Utils\Formulas.vb" />
+    <Compile Include="Utils\Md5.vb" />
+    <Compile Include="Utils\MyConsole.vb" />
+    <Compile Include="Utils\Name.vb" />
+    <Compile Include="Utils\Pathfinding.vb" />
+    <Compile Include="World\banner.vb" />
+    <Compile Include="World\Effect\Fighter.vb" />
+    <Compile Include="World\Player\ForbiddenWords.vb" />
+    <Compile Include="World\Player\MyObject.vb" />
+    <Compile Include="World\Player\MyObject1.vb" />
+    <Compile Include="World\Player\SimpleCommand.vb" />
+    <Compile Include="World\Player\SimpleManager.vb" />
+    <Compile Include="World\PodPlugins\Podpconfig.vb" />
+    <Compile Include="World\PodPlugins\connecting.vb" />
+    <Compile Include="World\Pub\PubManager.vb" />
+    <Compile Include="World\Sql.vb" />
+    <Compile Include="Utils\Basic.vb" />
+    <Compile Include="World\MagicalForge\Zone.vb" />
+    <Compile Include="World\Fight\Drops\Drops.vb" />
+    <Compile Include="World\Fight\Drops\DropsManager.vb" />
+    <Compile Include="World\Guild\GuildHandler.vb" />
+    <Compile Include="World\Guild\GuildRight.vb" />
+    <Compile Include="World\Guild\Perceptor\Perceptor.vb" />
+    <Compile Include="World\Guild\Perceptor\PerceptorManager.vb" />
+    <Compile Include="World\Guild\PlayerGuild.vb" />
+    <Compile Include="World\MagicalForge\MagicalForgeManager.vb" />
+    <Compile Include="Game\Mounts\MountCapacity.vb" />
+    <Compile Include="World\Maps\CellInfo.vb" />
+    <Compile Include="World\Maps\MovementEnum.vb" />
+    <Compile Include="World\Mount\MountFecondation.vb" />
+    <Compile Include="World\Mount\MountAncestor.vb" />
+    <Compile Include="World\Mount\Mount.vb" />
+    <Compile Include="World\Mount\Park.vb" />
+    <Compile Include="World\Paddock\Paddock.vb" />
+    <Compile Include="World\Paddock\PaddockManager.vb" />
+    <Compile Include="World\Player\Admin.vb" />
+    <Compile Include="World\Player\Commands.vb" />
+    <Compile Include="World\Effect\EffectBuff.vb" />
+    <Compile Include="World\Effect\EffectTrap.vb" />
+    <Compile Include="World\Effect\EffectTrigger.vb" />
+    <Compile Include="World\Fight\Fight.vb" />
+    <Compile Include="World\Player\Chat.vb" />
+    <Compile Include="World\Fight\FightBlocks.vb" />
+    <Compile Include="World\Fight\Fighter.vb" />
+    <Compile Include="World\Fight\FighterBuffs.vb" />
+    <Compile Include="World\Fight\FighterState.vb" />
+    <Compile Include="World\Fight\FightsHandler.vb" />
+    <Compile Include="World\Player\GameStats.vb" />
+    <Compile Include="World\Guild\Guild.vb" />
+    <Compile Include="World\Guild\GuildEmblem.vb" />
+    <Compile Include="World\Player\Levels.vb" />
+    <Compile Include="World\Player\ListOfGuild.vb" />
+    <Compile Include="World\Player\ListOfPlayersGuild.vb" />
+    <Compile Include="World\Player\LoginKeys.vb" />
+    <Compile Include="World\Maps\Map.vb" />
+    <Compile Include="World\Maps\MapsHandler.vb" />
+    <Compile Include="World\Maps\MapTrigger.vb" />
+    <Compile Include="World\Player\Player.vb" />
+    <Compile Include="World\Player\Players.vb" />
+    <Compile Include="World\Player\Save.vb" />
+    <Compile Include="Game\Store\StoreManager.vb" />
+    <Compile Include="World\Player\Whois.vb" />
+    <Compile Include="World\Tournament\Challenger.vb" />
+    <Compile Include="World\Tournament\ChallengerState.vb" />
+    <Compile Include="World\Tournament\Sorter.vb" />
+    <Compile Include="World\Tournament\Tournament.vb" />
+    <Compile Include="World\Tournament\TournamentManager.vb" />
+    <Compile Include="World\Tournament\TournamentState.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="My Project\app.manifest" />
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="Vemu_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="icone_vemu.ico" />
+    <Content Include="Logo-mu.ico" />
+    <Content Include="logo_vemu_2.ico" />
+    <Content Include="P.ico" />
+    <Content Include="pod.ico" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,72 @@
+﻿Imports Vemu_gs.Utils
+Imports Vemu_gs.World
+
+Namespace Game
+    Public MustInherit Class Challenge
+
+        Public Id As Integer
+        Public Fight As World.Fight
+        Public State As Boolean = True
+
+        Public Signaled As Boolean = False
+
+        Public ShowTarget As Boolean
+        Public TargetId As Integer
+        Public BasicXpBonus As Integer
+        Public TeamXpBonus As Integer
+        Public BasicDropBonus As Integer
+        Public TeamDropBonus As Integer
+
+        Sub New(ByVal Id As Integer, ByVal Fight As World.Fight)
+            Me.Fight = Fight
+            Me.Id = Id
+        End Sub
+
+        Public Overridable Sub BeginTurn(ByVal Fighter As Fighter)
+        End Sub
+
+        Public Overridable Sub EndTurn(ByVal Fighter As Fighter)
+        End Sub
+
+        Public Overridable Function CanSet() As Boolean
+            Return True
+        End Function
+
+        Public Overridable Sub CheckSpell(ByVal Fighter As Fighter, ByVal Effect As SpellEffect, ByVal Cibles As List(Of Fighter), ByVal Cell As Integer)
+        End Sub
+
+        Public Overridable Sub CheckMovement(ByVal FromCell As Integer, ByVal ToCell As Integer, ByVal Len As Integer)
+        End Sub
+
+        Public Overridable Sub CheckWeapon(ByVal Fighter As Fighter, ByVal Weapon As Item)
+        End Sub
+
+        Public Overridable Sub CheckDeath(ByVal Fighter As Fighter)
+        End Sub
+
+        Public Sub Show(ByVal Client As GameClient)
+            Client.Send("Gd" & Id & ";" & If(ShowTarget, "1", "0") & ";" & TargetId & ";" & BasicXpBonus & ";" & TeamXpBonus & ";" & BasicDropBonus & ";" & TeamDropBonus & ";" & State)
+        End Sub
+
+        Public Sub Ok()
+            If Not Signaled Then
+                State = True
+                Signaled = True
+                Fight.Send("GdKK" & Id)
+            End If
+        End Sub
+
+        Public Sub Fail()
+            If Not State = False Then
+                State = False
+                Fight.Send("GdOO" & Id)
+            End If
+        End Sub
+
+
+        Public Sub ShowCell(ByVal CellId As Integer)
+            Fight.Send("Gf285959|" & CellId)
+        End Sub
+
+    End Class
+End Namespace

@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svnroot/vemu-project/!svn/ver/34/LeGame/Game/Spells
+END
+Effect.vb
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/vemu-project/!svn/ver/21/LeGame/Game/Spells/Effect.vb
+END
+SpellEffect.vb
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Spells/SpellEffect.vb
+END
+Spell.vb
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Spells/Spell.vb
+END
+SpellsHandler.vb
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/vemu-project/!svn/ver/21/LeGame/Game/Spells/SpellsHandler.vb
+END
+SpellLearn.vb
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Spells/SpellLearn.vb
+END
+SpellTarget.vb
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Spells/SpellTarget.vb
+END
+SpellLevel.vb
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/vemu-project/!svn/ver/26/LeGame/Game/Spells/SpellLevel.vb
+END
+SpellEffectScore.vb
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/vemu-project/!svn/ver/34/LeGame/Game/Spells/SpellEffectScore.vb
+END

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svnroot/vemu-project/!svn/ver/33/LeGame/Game/Npcs
+END
+NpcTemplate.vb
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Npcs/NpcTemplate.vb
+END
+ResponseNPC.vb
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Npcs/ResponseNPC.vb
+END
+Npc.vb
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/vemu-project/!svn/ver/21/LeGame/Game/Npcs/Npc.vb
+END
+NpcDialog.vb
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/vemu-project/!svn/ver/33/LeGame/Game/Npcs/NpcDialog.vb
+END
+NpcsHandler.vb
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Npcs/NpcsHandler.vb
+END
+QuestionNPC.vb
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Npcs/QuestionNPC.vb
+END

@@ -1,0 +1,180 @@
+﻿Imports System.Text
+Imports Vemu_gs.Utils
+Imports Vemu_gs.Utils.Basic
+
+Namespace Game
+    Public Class MerchantBag
+
+        Public ReadOnly Character As Character
+        Public ListOfItems As New List(Of PricedItem)
+
+        Public Sub New(ByVal Character As Character)
+            Me.Character = Character
+        End Sub
+
+        Public Sub ClearItems()
+            ListOfItems.Clear()
+        End Sub
+
+        Public ReadOnly Property Count As Integer
+            Get
+                Return ListOfItems.Count
+            End Get
+        End Property
+
+        Public Function IsNotEmpty() As Boolean
+            Return ListOfItems.Count <> 0
+        End Function
+
+        Public Function HasItem(ByVal ItemId As Integer) As Boolean
+            Return GetItem(ItemId) IsNot Nothing
+        End Function
+
+        Public Function GetItem(ByVal ItemId As Integer) As PricedItem
+            Return ListOfItems.FirstOrDefault(Function(i) i.UniqueID = ItemId)
+        End Function
+
+        Public Function GetItemsString() As String
+            Return String.Join("|", ListOfItems.Select(Function(i) i.ToString()))
+        End Function
+
+        Public ReadOnly Property TotalPrice() As Long
+            Get
+                Return ListOfItems.Sum(Function(i) i.Price * i.Quantity)
+            End Get
+        End Property
+
+        Public Sub SendItemsList(ByVal Client As GameClient)
+            Client.Send("EL" & GetItemsString())
+        End Sub
+
+        Public ReadOnly Property GetItemsSave() As String
+            Get
+                Dim ItemSave As New StringBuilder
+                Dim First As Boolean = True
+                For Each Item As PricedItem In ListOfItems
+                    If First Then
+                        First = False
+                    Else
+                        ItemSave.Append(";")
+                    End If
+                    ItemSave.Append(Item.ToSaveString)
+                Next
+                Return ItemSave.ToString()
+            End Get
+        End Property
+
+        Public Sub LoadItem(ByVal TemplateID As String, ByVal Quantity As String, ByVal Price As Integer, ByVal Effects As String, ByVal Args As String)
+
+            If Not ItemsHandler.ItemExist(Convert.ToInt32(TemplateID, 16)) Then
+                Exit Sub
+            End If
+
+            Dim NewItem As New PricedItem
+            NewItem.UniqueID = ItemsHandler.GetUniqueID
+            NewItem.TemplateID = Convert.ToInt32(TemplateID, 16)
+            NewItem.Quantity = Convert.ToInt32(Quantity, 16)
+            NewItem.Price = Price
+            NewItem.Args = Args
+
+            If Effects.Length <> 0 Then
+                Dim EffectList() As String = Effects.Split(",")
+                For Each Effect As String In EffectList
+                    NewItem.AddEffect(ItemEffect.FromString(NewItem, Effect))
+                Next
+            End If
+
+            ListOfItems.Add(NewItem)
+
+        End Sub
+
+        Public Sub RemoveItem(ByVal TempItem As Item, ByVal DeleteQuantity As Integer)
+
+            If TempItem.Quantity > DeleteQuantity Then
+                TempItem.Quantity -= DeleteQuantity
+                Exit Sub
+            End If
+
+            ListOfItems.Remove(TempItem)
+        End Sub
+
+        Public Sub RemoveItem(ByVal Client As GameClient, ByVal TempItem As Item)
+
+            ListOfItems.Remove(TempItem)
+
+            Client.Send("EiK-" & TempItem.UniqueID & "|||")
+
+        End Sub
+
+        Public Sub BeginTrade(ByVal Client As GameClient)
+            Client.Character.State.BeginTrade(Trading.MerchantBag, Me)
+            Client.Send("ECK6|")
+            SendItemsList(Client)
+        End Sub
+
+        Public Sub EndTrade(ByVal Client As GameClient)
+            Client.Character.State.EndTrade()
+            Client.Send("EV")
+        End Sub
+
+        Public Sub AddItem(ByVal Client As GameClient, ByVal PricedItem As PricedItem)
+
+            For Each AlreadyItem As PricedItem In ListOfItems
+                If AlreadyItem.IsSuperposable(PricedItem) Then
+                    AlreadyItem.Quantity += PricedItem.Quantity
+                    Client.Send("EiK+" & AlreadyItem.UniqueID & "|" & AlreadyItem.Quantity & "|" & AlreadyItem.TemplateID & "|" & AlreadyItem.EffectsInfos & "|" & AlreadyItem.Price)
+                    Exit Sub
+                End If
+            Next
+
+            PricedItem.UniqueID = ItemsHandler.GetUniqueID
+            ListOfItems.Add(PricedItem)
+            Client.Send("EiK+" & PricedItem.UniqueID & "|" & PricedItem.Quantity & "|" & PricedItem.TemplateID & "|" & PricedItem.EffectsInfos & "|" & PricedItem.Price)
+
+        End Sub
+
+        Public Sub FromInventoryToMerchantBag(ByVal Client As GameClient, ByVal ItemId As Integer, ByVal Quantity As Integer, ByVal Price As Integer)
+
+            Dim Item As Item = Client.Character.Items.GetItemFromID(ItemId)
+
+            'Modify Price
+            If Quantity = 0 Then
+                Dim ItemToModify As PricedItem = GetItem(ItemId)
+                ItemToModify.Price = Price
+                SendItemsList(Client)
+                Exit Sub
+            End If
+
+            'Try to pass an invalid quantity to the bag :O
+            If Item.Quantity < Quantity Then
+                Client.Send("EiE")
+            End If
+
+            Client.Character.Items.RemoveItem(Client, Item, Quantity)
+
+            Dim PricedItem As PricedItem = Item.ToPricedItem(Price)
+            PricedItem.Quantity = Quantity
+
+            AddItem(Client, PricedItem)
+
+        End Sub
+
+        Public Sub FromMerchantBagToInventory(ByVal Client As GameClient, ByVal ItemId As Integer, ByVal Quantity As Integer)
+
+            Dim PricedItem As PricedItem = GetItem(ItemId)
+
+            'Try to pass an invalid quantity to the inventory :O
+            If PricedItem Is Nothing Or PricedItem.Quantity <> Quantity Then
+                Client.Send("EiE")
+                Return
+            End If
+
+            RemoveItem(Client, PricedItem)
+            Dim InventoryItem = PricedItem.Copy()
+            InventoryItem.Position = -1
+            Client.Character.Items.AddItem(Client, InventoryItem)
+
+        End Sub
+
+    End Class
+End Namespace

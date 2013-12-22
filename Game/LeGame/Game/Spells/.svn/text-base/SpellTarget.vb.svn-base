@@ -1,0 +1,53 @@
+﻿Imports Vemu_gs.Utils.BooleanByte
+Imports Vemu_gs.World
+
+Namespace Game
+    Public Class SpellTarget
+
+        Public Ennemis, Allies, Lanceur, LanceurPlus, Invocations As Boolean
+
+        Public Sub Update(ByVal Value As Integer)
+
+            Ennemis = GetFlag(Value, 0)
+            Allies = GetFlag(Value, 1)
+            Lanceur = GetFlag(Value, 2)
+            LanceurPlus = GetFlag(Value, 3)
+            Invocations = GetFlag(Value, 4)
+
+        End Sub
+
+        Public Sub New()
+            Update(23)
+        End Sub
+
+        Public Function RemixCibles(ByVal Player As Fighter, ByVal Cibles As List(Of Fighter)) As List(Of Fighter)
+
+            Dim NewList As New List(Of Fighter)
+
+            For Each Cible As Fighter In Cibles
+                If Not NewList.Contains(Cible) Then
+                    If Ennemis AndAlso Player.Team <> Cible.Team Then
+                        NewList.Add(Cible)
+                        Continue For
+                    End If
+                    If Allies AndAlso Player.Id <> Cible.Id AndAlso Player.Team = Cible.Team Then
+                        NewList.Add(Cible)
+                        Continue For
+                    End If
+                    If Lanceur AndAlso Player.Id = Cible.Id Then
+                        NewList.Add(Cible)
+                        Continue For
+                    End If
+                End If
+            Next
+
+            If LanceurPlus AndAlso Not NewList.Contains(Player) Then
+                NewList.Add(Player)
+            End If
+
+            Return NewList
+
+        End Function
+
+    End Class
+End Namespace

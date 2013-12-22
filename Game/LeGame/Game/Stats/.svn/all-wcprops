@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svnroot/vemu-project/!svn/ver/21/LeGame/Game/Stats
+END
+StatsBase.vb
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Stats/StatsBase.vb
+END
+StatsPlayer.vb
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/vemu-project/!svn/ver/21/LeGame/Game/Stats/StatsPlayer.vb
+END
+StatsDamage.vb
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Stats/StatsDamage.vb
+END
+Stats.vb
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/vemu-project/!svn/ver/21/LeGame/Game/Stats/Stats.vb
+END
+StatsArmor.vb
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Stats/StatsArmor.vb
+END
+StatsResistance.vb
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Stats/StatsResistance.vb
+END
+StatsRow.vb
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/vemu-project/!svn/ver/1/LeGame/Game/Stats/StatsRow.vb
+END

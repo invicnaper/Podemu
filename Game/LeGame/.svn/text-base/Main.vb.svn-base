@@ -1,0 +1,66 @@
+﻿Imports Vemu_gs.Game
+Imports Vemu_gs.Game.Actions
+Imports Vemu_gs.Utils
+
+Module Main
+
+    Public ServerId As Integer = 0
+
+    Sub Main()
+        Try
+            Utils.Basic.StartTime = Environment.TickCount
+            Utils.Config.LoadConfig()
+            Utils.MyConsole.DrawTitle()
+            Utils.Sql.OpenConnexion()
+            Game.SpellsHandler.SetupSpells()
+            Game.ZaapsHandler.LoadZaaps()
+            Game.ZaapisManager.LoadZaapis()
+            Game.NpcDialog.LoadQuestion()
+            Game.NpcDialog.LoadResponse()
+            '  Game.PrismManager.LoadPrism()
+            World.DropsManager.Load()
+            World.GuildHandler.LoadGuild()
+            '  World.PerceptorManager.LoadPerceptor()
+            Game.MonstersHandler.SetupMonsters()
+            World.MapsHandler.SetupMaps()
+            Game.MountsHandler.SetupMounts()
+            Game.PaddockHandler.SetupPaddocks()
+            World.PaddockManager.LoadPaddocks()
+            Game.InteractiveHandler.SetupInteractives()
+            Game.SentencesHandler.LoadSentences()
+            ChallengeHandler.SetupChallenges()
+            ActionHandler.SetupActions()
+            Game.ItemsHandler.SetupItems()
+            Game.GiftsHandler.LoadGifts()
+            Game.NpcsHandler.SetupNpcs()
+            Game.SubAreasHandler.SetupSubAreas()
+            Game.DungeonsHandler.SetupDungeons()
+            Game.ExperienceTable.SetupExperience()
+            Game.StoreManager.LoadStore()
+            Game.CharactersManager.LoadAll()
+            World.Save.StartTimer()
+            Server.GameServer.GetInstance()
+            Server.UselessServer.GetInstance()
+            Server.RealmLink.GetInstance()
+
+
+            Utils.MyConsole.Status("Server loaded @successfully@ in '@" & (Environment.TickCount - Utils.Basic.StartTime) & "@ ms'")
+
+            GC.Collect()
+            GC.WaitForPendingFinalizers()
+
+            Threading.Thread.Sleep(2500) ' Histoire de voir ce que l'emu ecris :)
+
+            Console.Clear()
+            Utils.MyConsole.DrawTitle()
+            World.GameStats.SetupStats()
+
+        Catch ex As Exception
+            Utils.MyConsole.Err(ex.ToString, True)
+        End Try
+
+        Console.ReadLine()
+
+    End Sub
+
+End Module

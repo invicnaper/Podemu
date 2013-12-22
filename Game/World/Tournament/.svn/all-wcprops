@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svnroot/vemu-project/!svn/ver/6/LeGame/World/Tournament
+END
+Tournament.vb
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/vemu-project/!svn/ver/6/LeGame/World/Tournament/Tournament.vb
+END
+TournamentState.vb
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/vemu-project/!svn/ver/6/LeGame/World/Tournament/TournamentState.vb
+END
+Sorter.vb
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/vemu-project/!svn/ver/6/LeGame/World/Tournament/Sorter.vb
+END
+Challenger.vb
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/vemu-project/!svn/ver/6/LeGame/World/Tournament/Challenger.vb
+END
+ChallengerState.vb
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/vemu-project/!svn/ver/6/LeGame/World/Tournament/ChallengerState.vb
+END
+TournamentManager.vb
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/vemu-project/!svn/ver/3/LeGame/World/Tournament/TournamentManager.vb
+END

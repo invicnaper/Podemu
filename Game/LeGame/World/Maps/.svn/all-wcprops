@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svnroot/vemu-project/!svn/ver/35/LeGame/World/Maps
+END
+CellInfo.vb
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/vemu-project/!svn/ver/21/LeGame/World/Maps/CellInfo.vb
+END
+Map.vb
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/vemu-project/!svn/ver/35/LeGame/World/Maps/Map.vb
+END
+MapsHandler.vb
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/vemu-project/!svn/ver/26/LeGame/World/Maps/MapsHandler.vb
+END
+MovementEnum.vb
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/vemu-project/!svn/ver/1/LeGame/World/Maps/MovementEnum.vb
+END
+MapTrigger.vb
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/vemu-project/!svn/ver/1/LeGame/World/Maps/MapTrigger.vb
+END

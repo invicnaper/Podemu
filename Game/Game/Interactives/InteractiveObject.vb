@@ -1,0 +1,53 @@
+﻿Imports Podemu.Utils
+
+Namespace Game
+    Public MustInherit Class InteractiveObject
+
+        Private ReadOnly Skills As IEnumerable(Of Integer)
+        Public Map As World.Map
+        Public CellId As Integer
+        Protected Active As Boolean = True
+        Protected FrameId As Integer = 0
+
+        Sub New(ByVal Map As World.Map, ByVal CellId As Integer, ByVal Skills As List(Of Integer))
+            Me.Map = Map
+            Me.CellId = CellId
+            Me.Skills = Skills
+        End Sub
+
+        Public Function HasSkills(ByVal SkillId As Integer) As Boolean
+            Return Skills.Count(Function(s) s = SkillId) <> 0
+        End Function
+
+        Public Overridable Sub Use(ByVal Client As GameClient, ByVal SkillId As Integer)
+            Client.Send("Eh doucement mon petit gars, c'est pas encore implanté")
+        End Sub
+
+        Public Overridable ReadOnly Property DisplayPattern As String
+            Get
+                Return String.Concat(CellId & ";" & FrameId & ";" & If(Active, "1", "0"))
+            End Get
+        End Property
+
+        Protected Sub ChangeFrame(ByVal FrameId As Integer, ByVal Desactivate As Boolean)
+            Me.FrameId = FrameId
+            Active = Not Desactivate
+            Map.Send("GDF|" & CellId & ";" & FrameId & ";" & If(Desactivate, 0, 1))
+        End Sub
+
+        Protected Sub Activate()
+            Active = True
+            Map.Send("GDF|" & CellId & ";;1")
+        End Sub
+
+        Protected Sub Desactivate()
+            Active = False
+            Map.Send("GDF|" & CellId & ";;0")
+        End Sub
+
+        Protected Sub ShowNumber(ByVal Client As GameClient, ByVal Number As Integer)
+            Client.Send("IQ" & Client.Character.ID & "|" & Number)
+        End Sub
+
+    End Class
+End Namespace

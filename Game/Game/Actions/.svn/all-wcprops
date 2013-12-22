@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/vemu-project/!svn/ver/33/LeGame/Game/Actions
+END
+SerializedAction.vb
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/vemu-project/!svn/ver/33/LeGame/Game/Actions/SerializedAction.vb
+END
+ActionHandler.vb
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/vemu-project/!svn/ver/33/LeGame/Game/Actions/ActionHandler.vb
+END
+Action.vb
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/vemu-project/!svn/ver/33/LeGame/Game/Actions/Action.vb
+END
+ActionEnum.vb
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/vemu-project/!svn/ver/33/LeGame/Game/Actions/ActionEnum.vb
+END
+SerializedActionList.vb
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/vemu-project/!svn/ver/33/LeGame/Game/Actions/SerializedActionList.vb
+END
+GiveItemAction.vb
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/vemu-project/!svn/ver/33/LeGame/Game/Actions/GiveItemAction.vb
+END
+GiveLifeAction.vb
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/vemu-project/!svn/ver/33/LeGame/Game/Actions/GiveLifeAction.vb
+END

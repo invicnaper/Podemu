@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/vemu-project/!svn/ver/1/LeRealm/Server
+END
+TCPServer.vb
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/vemu-project/!svn/ver/1/LeRealm/Server/TCPServer.vb
+END
+LoginServer.vb
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/vemu-project/!svn/ver/1/LeRealm/Server/LoginServer.vb
+END
+BazSocket.vb
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/vemu-project/!svn/ver/1/LeRealm/Server/BazSocket.vb
+END

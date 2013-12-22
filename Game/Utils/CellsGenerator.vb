@@ -1,0 +1,75 @@
+﻿Imports Podemu.Game
+Imports Podemu.World
+
+Namespace Utils
+    Public Class CellsGenerator
+
+        Public Shared Function Generate(ByVal Map As Map) As Dictionary(Of Integer, List(Of Integer))
+
+            Dim PossibleCell As New List(Of Integer)(Map.CellInfos.Count)
+            For i As Integer = 0 To 1024
+                If Map.IsCellReachable(i) Then
+                    PossibleCell.Add(i)
+                End If
+            Next
+
+            If PossibleCell.Count < 20 Then
+                Return Nothing
+            End If
+
+            Dim CellsDic As New Dictionary(Of Integer, List(Of Integer))
+
+            For i As Integer = 0 To 1
+
+                Dim CellList As New List(Of Integer)(8)
+
+                While CellList.Count < 8
+
+                    Select Case If(i = 0 AndAlso CellList.Count = 0, 1, Basic.Rand(1, 3))
+
+                        Case 1
+                            Dim Cell As Integer = PossibleCell(Basic.Rand(0, PossibleCell.Count - 1))
+                            If Not CellList.Contains(Cell) Then CellList.Add(Cell)
+
+                        Case Else
+                            Dim LastCell As Integer = 0
+                            If i = 1 AndAlso CellList.Count = 0 Then
+                                LastCell = CellsDic(0).Last
+                            Else
+                                LastCell = CellList.Last
+                            End If
+
+                            Select Case Basic.Rand(1, 4)
+
+                                Case 1
+                                    Dim Cell As Integer = Cells.NextCell(Map, LastCell, 1)
+                                    If PossibleCell.Contains(Cell) AndAlso Not CellList.Contains(Cell) Then CellList.Add(Cell)
+
+                                Case 2
+                                    Dim Cell As Integer = Cells.NextCell(Map, LastCell, 3)
+                                    If PossibleCell.Contains(Cell) AndAlso Not CellList.Contains(Cell) Then CellList.Add(Cell)
+
+                                Case 3
+                                    Dim Cell As Integer = Cells.NextCell(Map, LastCell, 5)
+                                    If PossibleCell.Contains(Cell) AndAlso Not CellList.Contains(Cell) Then CellList.Add(Cell)
+
+                                Case 4
+                                    Dim Cell As Integer = Cells.NextCell(Map, LastCell, 7)
+                                    If PossibleCell.Contains(Cell) AndAlso Not CellList.Contains(Cell) Then CellList.Add(Cell)
+
+                            End Select
+
+                    End Select
+
+                End While
+
+                CellsDic.Add(i, CellList)
+
+            Next
+
+            Return CellsDic
+
+        End Function
+
+    End Class
+End Namespace

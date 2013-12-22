@@ -1,0 +1,58 @@
+﻿Namespace Game
+    Public Class MonsterGroup
+
+        Public MonsterList As New List(Of Monster)
+        Public Cell, Dir As Integer
+        Public Id As Integer
+
+        Public HasWin As Boolean
+        Public SetDate As DateTime
+
+        Public Items As List(Of Item)
+        Public Kamas As Long
+
+        Public ReadOnly Property GetGameInfo() As String
+            Get
+                Dim GameInfo As String = "|+" & Cell & ";" & Dir & ";0;" & Id & ";"
+                Dim MonsterIDs As String = ""
+                Dim MonsterSkins As String = ""
+                Dim MonsterLvls As String = ""
+                Dim ColorsAndCo As String = ""
+
+
+
+
+                'Dim First As Boolean = True
+                'For Each Monster As Monster In MonsterList
+
+                '    If First Then
+                '        First = False
+                '    Else
+                '        MonsterIDs &= ","
+                '        MonsterSkins &= ","
+                '        MonsterLvls &= ","
+                '        ColorsAndCo &= ";"
+                '    End If
+
+
+                '    Dim Template As MonsterTemplate = Monster.Level.Template
+
+                '    MonsterIDs &= Template.Id
+                '    MonsterSkins &= Monster.Level.Template.Skin & "^" & Monster.Level.Size
+                '    MonsterLvls &= Monster.Level.Level
+                '    ColorsAndCo &= Utils.Basic.DeciToHex(Template.Color(0)) & ","
+                '    ColorsAndCo &= Utils.Basic.DeciToHex(Template.Color(1)) & ","
+                '    ColorsAndCo &= Utils.Basic.DeciToHex(Template.Color(2)) & ";"
+                '    ColorsAndCo &= "0,0,0,0"
+
+                'Next
+
+                GameInfo &= "52;-3;1564^100;10;-1,-1,-1;0,0,0,0;100;100;100;100"
+
+                '    GameInfo &= MonsterIDs & ";-3;" & MonsterSkins & ";" & MonsterLvls & ";" & ColorsAndCo & ";10"
+                Return GameInfo
+            End Get
+        End Property
+
+    End Class
+End Namespace

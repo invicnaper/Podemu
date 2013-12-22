@@ -1,0 +1,47 @@
+﻿Imports MySql.Data.MySqlClient
+Imports Podemu.Utils
+Imports Podemu.Utils.Basic
+
+Namespace Game
+    Public Class SentencesHandler
+
+        Private Shared Sentences As New Dictionary(Of SentenceType, List(Of String))
+
+
+        Public Shared Function HasSentencesFor(ByVal Type As SentenceType) As Boolean
+            Return Sentences.ContainsKey(Type) AndAlso Sentences(Type).Count <> 0
+        End Function
+
+        Public Shared Function GetRandomOf(ByVal Type As SentenceType) As String
+            If Sentences.ContainsKey(Type) Then
+                Dim count As Integer = Sentences(Type).Count
+                Return Sentences(Type)(Basic.Rand(0, count - 1))
+            End If
+            Return ""
+        End Function
+
+        Public Shared Sub LoadSentences()
+
+            Dim SQLText As String = "SELECT * FROM sentences"
+            Dim SQLCommand As New MySqlCommand(SQLText, Sql.Others)
+
+            Dim Result As MySqlDataReader = SQLCommand.ExecuteReader
+
+            While Result.Read
+
+                Dim type = Result.GetInt32("type")
+
+                If Not Sentences.ContainsKey(type) Then Sentences.Add(type, New List(Of String))
+
+                Sentences(type).Add(Result.GetString("sentence"))
+
+            End While
+
+            Result.Close()
+
+        End Sub
+
+  
+
+    End Class
+End Namespace

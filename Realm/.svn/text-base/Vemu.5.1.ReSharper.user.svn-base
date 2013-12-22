@@ -1,0 +1,73 @@
+<Configuration>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean>
+      <setting name="SolutionAnalysisEnabled">False</setting>
+    </boolean>
+  </SettingsComponent>
+  <RecentFiles>
+    <RecentFiles>
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Server/f:LoginServer.vb" caret="0" fromTop="0" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Utils/f:Basic.vb" caret="1121" fromTop="8" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Utils/f:MyConsole.vb" caret="962" fromTop="13" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/f:Main.vb" caret="0" fromTop="0" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Utils/f:Config.vb" caret="682" fromTop="16" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Utils/f:Sql.vb" caret="315" fromTop="11" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginState.vb" caret="0" fromTop="0" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:GameHandler.vb" caret="0" fromTop="0" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginInfos.vb" caret="1306" fromTop="10" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:GameServer.vb" caret="1030" fromTop="0" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginKey.vb" caret="384" fromTop="11" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Server/f:TCPServer.vb" caret="1215" fromTop="12" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Utils/f:LoginKeys.vb" caret="824" fromTop="10" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginParser.vb" caret="1649" fromTop="9" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Server/f:BazSocket.vb" caret="23746" fromTop="11" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:AbstractClient.vb" caret="978" fromTop="12" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginClient.vb" caret="845" fromTop="0" />
+    </RecentFiles>
+    <RecentEdits>
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:GameServer.vb" caret="1776" fromTop="10" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:GameServer.vb" caret="1776" fromTop="1" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:GameServer.vb" caret="3298" fromTop="14" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:GameServer.vb" caret="3298" fromTop="7" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:GameServer.vb" caret="3298" fromTop="0" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginInfos.vb" caret="4273" fromTop="21" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginInfos.vb" caret="3377" fromTop="3" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginInfos.vb" caret="4066" fromTop="13" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginInfos.vb" caret="3774" fromTop="9" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:GameServer.vb" caret="3254" fromTop="11" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:GameServer.vb" caret="2970" fromTop="5" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:GameServer.vb" caret="2744" fromTop="7" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:GameServer.vb" caret="1296" fromTop="8" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginInfos.vb" caret="1306" fromTop="10" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginKey.vb" caret="193" fromTop="6" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginKey.vb" caret="384" fromTop="11" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginParser.vb" caret="5997" fromTop="11" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginParser.vb" caret="3518" fromTop="15" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Utils/f:LoginKeys.vb" caret="1180" fromTop="23" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Utils/f:LoginKeys.vb" caret="891" fromTop="12" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Utils/f:LoginKeys.vb" caret="1049" fromTop="15" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginParser.vb" caret="3855" fromTop="2" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginParser.vb" caret="2484" fromTop="16" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginParser.vb" caret="2470" fromTop="10" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginParser.vb" caret="1837" fromTop="5" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginParser.vb" caret="1232" fromTop="5" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginParser.vb" caret="2160" fromTop="5" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginParser.vb" caret="1250" fromTop="5" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginParser.vb" caret="1323" fromTop="4" />
+      <File id="79682579-DCBF-4E9B-B25B-D2EED8C1C426/d:Realm/f:LoginParser.vb" caret="1726" fromTop="13" />
+    </RecentEdits>
+  </RecentFiles>
+  <NAntValidationSettings>
+    <NAntPath value="" />
+  </NAntValidationSettings>
+  <UnitTestRunner>
+    <Providers />
+  </UnitTestRunner>
+  <UnitTestRunnerNUnit>
+    <NUnitInstallDir IsNull="False">
+    </NUnitInstallDir>
+    <UseAddins>Never</UseAddins>
+  </UnitTestRunnerNUnit>
+</Configuration>

@@ -1,0 +1,92 @@
+﻿Imports Vemu_gs.Game
+Imports Vemu_gs.World.Players
+Imports Vemu_gs.Utils
+Imports MySql.Data.MySqlClient
+
+Namespace World
+    Public Class Save
+
+        Private Shared WithEvents SaveTimer As New Timers.Timer
+        Private Shared WithEvents CleanTimer As New Timers.Timer
+        Private Shared Started As Boolean = False
+
+        Public Shared Sub Save()
+
+            SendMessage("Début de la sauvegarde des joueurs du serveur.")
+
+            SyncLock Sql.CharactersSync
+
+                Try
+
+                    Dim SQLStart As New MySqlCommand("START TRANSACTION", Sql.Characters)
+                    SQLStart.ExecuteNonQuery()
+
+                    'Player
+                    For Each Player As GameClient In GetPlayers()
+                        Player.Character.Save()
+                    Next
+
+                    'Paddock
+                    PaddockManager.SavePaddocks()
+
+                    'Merchant
+                    For Each Key As KeyValuePair(Of String, Character) In CharactersManager.CharactersList.Where(Function(c) c.Value.State.IsMerchant)
+                        Dim Merchant As Merchant = Key.Value
+                        Merchant.Save()
+                    Next
+
+                    'Empty Merchant
+                    For Each Key As KeyValuePair(Of String, Character) In CharactersManager.CharactersList.Where(Function(c) c.Value.State.IsEmptyMerchant)
+                        Key.Value.Save()
+                        Key.Value.State.IsEmptyMerchant = False
+                    Next
+
+                    Dim SQLEnd As New MySqlCommand("COMMIT", Sql.Characters)
+                    SQLEnd.ExecuteNonQuery()
+
+                    SendMessage("Fin de la sauvegarde des joueurs du serveur.")
+
+
+                Catch ex As Exception
+                    MyConsole.Err(ex.ToString)
+                    SendMessage("Erreur lors de la sauvegarde. Aucune modification effectuée.")
+
+                    Dim SQLFailed As New MySqlCommand("ROLLBACK", Sql.Characters)
+                    SQLFailed.ExecuteNonQuery()
+
+                End Try
+
+            End SyncLock
+
+        End Sub
+
+        Private Shared Sub SaveAll() Handles SaveTimer.Elapsed
+
+            If Started Then Exit Sub
+            Started = True
+
+            Save()
+
+            Started = False
+
+        End Sub
+
+        Private Shared Sub Clean() Handles CleanTimer.Elapsed
+
+            Server.GameServer.GetInstance.ReListen(Utils.Config.GetItem("GAME_PORT"))
+
+            For Each Player As GameClient In Players.GetPlayers
+                Player.Ping.Ping(Player)
+            Next
+
+        End Sub
+
+        Public Shared Sub StartTimer()
+            CleanTimer.Interval = 5000
+            CleanTimer.Enabled = True
+            SaveTimer.Interval = 900000
+            SaveTimer.Enabled = True
+        End Sub
+
+    End Class
+End Namespace

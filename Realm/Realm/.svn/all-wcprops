@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/vemu-project/!svn/ver/32/LeRealm/Realm
+END
+LoginState.vb
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/vemu-project/!svn/ver/1/LeRealm/Realm/LoginState.vb
+END
+GameServer.vb
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/vemu-project/!svn/ver/2/LeRealm/Realm/GameServer.vb
+END
+LoginKey.vb
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/vemu-project/!svn/ver/25/LeRealm/Realm/LoginKey.vb
+END
+AbstractClient.vb
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/vemu-project/!svn/ver/1/LeRealm/Realm/AbstractClient.vb
+END
+LoginParser.vb
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/vemu-project/!svn/ver/32/LeRealm/Realm/LoginParser.vb
+END
+GameHandler.vb
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/vemu-project/!svn/ver/1/LeRealm/Realm/GameHandler.vb
+END
+LoginClient.vb
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/vemu-project/!svn/ver/1/LeRealm/Realm/LoginClient.vb
+END
+LoginInfos.vb
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/vemu-project/!svn/ver/2/LeRealm/Realm/LoginInfos.vb
+END

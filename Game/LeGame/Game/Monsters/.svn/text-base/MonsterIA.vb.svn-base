@@ -1,0 +1,332 @@
+﻿Imports System.Threading.Tasks
+Imports Vemu_gs.Utils
+Imports Vemu_gs.World
+
+Namespace Game
+    Public Class MonsterIA
+
+#Region " Déclarations "
+
+        Public ReadOnly CellCount As Integer
+        Public ReadOnly AI As Integer
+        Public ReadOnly Enemies As IEnumerable(Of Fighter)
+
+        Dim Fight As Fight
+        Dim Monster As Fighter
+
+
+        Public Sub New(ByVal eFight As Fight, ByVal eMonster As Fighter)
+            Fight = eFight
+            Monster = eMonster
+            CellCount = Fight.Map.CellInfos.Count
+            AI = Monster.Monster.Level.Template.AI
+            Enemies = Fight.Fighters.Where(Function(f) f.Team <> Monster.Team AndAlso Not f.Dead AndAlso Not f.Abandon)
+        End Sub
+
+#End Region
+
+        Public HasAttack As Boolean
+        Public ReachableCells As List(Of Integer)
+
+#Region " Fonctions "
+
+
+        Private Function GetReachableCells() As List(Of Integer)
+
+            Dim Cells As New List(Of Integer)(30)
+
+            Cells.Add(Monster.Cell)
+
+            For i As Integer = 1 To CellCount
+
+                If Fight.IsValidCell(i) Then
+                    If Utils.Cells.GoalDistance(Fight.Map, Monster.Cell, i) <= Monster.PM Then
+                        If Not Cells.Contains(i) Then Cells.Add(i)
+                    End If
+                End If
+
+            Next
+
+            Return Cells
+
+        End Function
+
+        Private Function GenerateBestSpell() As MonsterIA.Action
+
+            'Score
+            Dim Scores As New List(Of Action)(1000)
+
+            'Cells qu'on peut atteindre
+            ReachableCells = GetReachableCells()
+
+            'on garde la cell
+            Dim tempCell = Monster.Cell
+
+            'Pour chaque sort du Mob qu'on peut 
+            For Each SpellLevel As SpellLevel In Monster.Monster.Level.SpellList
+
+                For Each Cell In ReachableCells
+
+                    Monster.Cell = Cell
+
+                    For i As Integer = 1 To CellCount
+
+                        If Fight.CanLaunchSpell(Monster, SpellLevel, i) Then
+
+                            Dim pts = SpellLevel.GetScore(Monster, i)
+
+                            If pts <= 0 Then Continue For
+
+                            pts += 2000 - Cells.GoalDistance(Fight.Map, tempCell, Cell)
+
+                            For Each player In Enemies
+                                If Not Cells.CheckView(Fight, Cell, i) Then pts += 200
+                            Next
+
+                            Dim action As New MonsterIA.Action
+                            action.Score = pts
+                            action.LaunchCell = Cell
+                            action.ThrowCell = i
+                            action.Spell = SpellLevel
+
+                            Scores.Add(action)
+
+                        End If
+                    Next
+                Next
+            Next
+
+            Monster.Cell = tempCell
+
+            Return If(Scores.Count = 0, Nothing, Scores.OrderByDescending(Function(a) a.Score).First())
+
+        End Function
+
+        Public Class Action
+
+            Public LaunchCell As Integer
+            Public ThrowCell As Integer
+            Public Spell As SpellLevel
+            Public Score As Integer
+
+        End Class
+
+        Private Function Process(ByVal Action As MonsterIA.Action) As Boolean
+
+            If Monster.Cell <> Action.LaunchCell Then
+                Dim Path As New Utils.Pathfinding()
+                Dim NewPath As String = Path.Pathing(Fight.Map, Monster.Cell, Action.LaunchCell, True, Monster.PM, True, Fight)
+                If NewPath.Length = 0 OrElse Not Fight.PlayerMove(Monster, NewPath, Utils.Cells.GetPathLenght(Monster.Cell, Fight.Map, NewPath)) Then
+                    Return False
+                End If
+                ReachableCells = GetReachableCells()
+            End If
+
+            Fight.LaunchSpell(Monster, Action.Spell, Action.ThrowCell)
+
+            Return True
+
+        End Function
+
+        'Private Function BestPlayerCell() As String
+
+        '    If Monster.PM = 0 Then Return ""
+
+        '    Dim BestPath As String = ""
+        '    Dim BestPathLen As Integer = Int32.MaxValue
+
+        '    'Pour toutes les Cells qu'on peut atteindre
+        '    For Each Cell As Integer In ReachableCells
+        '        For Each Player In Enemies
+        '            For i As Integer = 1 To 7 Step 2
+
+        '                Dim ToCell = Cells.NextCell(Fight.Map, Player.Cell, i)
+
+        '                Dim path As New Pathfinding()
+        '                Dim p = path.Pathing(Fight.Map, Monster.Cell, ToCell, True, Monster.PM, True, Fight)
+        '                Dim len = Cells.GetPathLenght(Monster.Cell, Fight.Map, p)
+
+        '                If len < BestPathLen Then
+        '                    BestPath = p
+        '                    BestPathLen = len
+        '                End If
+        '            Next
+        '        Next
+        '    Next
+
+        '    Return BestPath
+        'End Function
+
+        Private Function BestPlayerCell() As String
+
+            If Monster.PM = 0 Then Return ""
+
+            Dim BestPath As String = ""
+            Dim BestPathLen As Integer = Int32.MaxValue
+
+            'Pour chaque joueur
+            For Each Player In Enemies
+
+                'Cellules adjacentes
+                For Each Cell In Cells.NearestCells(Fight.Map, Player.Cell)
+
+                    Dim path As New Pathfinding()
+                    Dim p = path.Pathing(Fight.Map, Monster.Cell, Cell, True, Monster.PM, True, Fight)
+                    Dim len = Cells.GetPathLenght(Monster.Cell, Fight.Map, p)
+
+                    If len < BestPathLen Then
+                        BestPath = p
+                        BestPathLen = len
+                    End If
+
+                Next
+            Next
+
+            Return BestPath
+        End Function
+
+        Private Function BestFuitCell() As String
+
+            If Monster.PM = 0 Then Return ""
+
+            Dim Friends = Fight.Fighters.Where(Function(f) f.Team = Monster.Team AndAlso Not f.Dead AndAlso Not f.Abandon)
+            Dim Score As New Dictionary(Of Integer, Integer)(ReachableCells.Count)
+
+            For Each Cell As Integer In ReachableCells
+
+                Dim s = 0
+
+                For Each Player In Enemies
+                    s += Cells.GoalDistance(Fight.Map, Cell, Player.Cell)
+                    If Not Cells.CheckView(Fight, Cell, Player.Cell, Friends) Then s += 5000
+                Next
+
+                Score.Add(Cell, s)
+
+            Next
+
+            Dim BestCell = Score.OrderByDescending(Function(c) c.Value).FirstOrDefault().Key
+
+            If BestCell <> 0 Then
+
+                Dim path As New Pathfinding()
+                Return path.Pathing(Fight.Map, Monster.Cell, BestCell, True, Monster.PM, True, Fight)
+
+            End If
+
+            Return ""
+        End Function
+
+        Private Function BestNearerCell() As String
+
+            If Monster.PM = 0 Then Return ""
+
+            Dim BestPath = ""
+            Dim BestScore = Int32.MaxValue
+            Dim alreadyEnemies = Enemies.Where(Function(e) Cells.NearestCells(Fight.Map, e.Cell).Contains(Monster.Cell))
+
+            For Each Cell As Integer In ReachableCells
+
+                Dim ne = Enemies.Where(Function(e) Not alreadyEnemies.Contains(e) AndAlso Cells.NearestCells(Fight.Map, e.Cell).Contains(Cell))
+
+                If ne.Count() = 0 Then Continue For
+
+                Dim sc = ne.Sum(Function(e) e.Life)
+
+                If sc < BestScore Then
+                    Dim path As New Pathfinding()
+                    Dim p = path.Pathing(Fight.Map, Monster.Cell, Cell, True, Monster.PM, True, Fight)
+                    If p <> "" Then
+                        BestPath = p
+                        BestScore = sc
+                    End If
+                End If
+
+            Next
+
+            Return BestPath
+        End Function
+
+        Private Sub ApplyEndMove()
+
+            'Il n'a pas attaqué, on tente de se rapprocher de la cible
+            If Not HasAttack Then
+
+                Dim BestPath = BestPlayerCell()
+
+                If BestPath <> "" Then
+                    Fight.PlayerMove(Monster, BestPath, Cells.GetPathLenght(Monster.Cell, Fight.Map, BestPath))
+                End If
+
+
+            Else
+
+                Select Case AI
+
+                    'Si il est fuyard, on s'éloigne
+                    Case 1
+
+                        Dim BestPath = BestFuitCell()
+
+                        If BestPath <> "" Then
+                            Fight.PlayerMove(Monster, BestPath, Cells.GetPathLenght(Monster.Cell, Fight.Map, BestPath))
+                        End If
+
+
+                        'Sinon si on peut atteindre un meilleur personnage
+                    Case 2
+
+                        Dim BestPath = BestNearerCell()
+
+                        If BestPath <> "" Then
+                            Fight.PlayerMove(Monster, BestPath, Cells.GetPathLenght(Monster.Cell, Fight.Map, BestPath))
+                        End If
+
+                End Select
+
+            End If
+
+        End Sub
+
+#End Region
+
+#Region " Application "
+
+        Public Sub ApplyThread()
+
+            Try
+
+                Dim toDo As MonsterIA.Action = GenerateBestSpell()
+
+                Dim Max As Integer = 0
+                While toDo IsNot Nothing AndAlso Max < 10
+
+                    HasAttack = Process(toDo)
+
+                    toDo = GenerateBestSpell()
+
+                    Max += 1
+
+                End While
+
+                ApplyEndMove()
+
+                Fight.FinishTurn()
+
+            Catch ex As Exception
+                Fight.FinishTurn()
+            End Try
+
+        End Sub
+
+        Public Sub Apply()
+
+            Dim FightThread As New Threading.Tasks.Task(AddressOf ApplyThread)
+            FightThread.Start()
+
+        End Sub
+
+#End Region
+
+    End Class
+End Namespace

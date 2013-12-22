@@ -1,0 +1,162 @@
+﻿Namespace Game
+    Public Class StatsPlayer
+
+        Public Level As Integer
+        Public Kamas, Exp As Long
+        Public CharactPoint, SpellPoint As Integer
+        Public Life, Energy, PA, PM As Integer
+
+        Public Monster As Boolean = False
+        Public MyMonster As Monster = Nothing
+
+        Public Stats As New Stats
+        Public Alignment As New CharacterAlignment
+
+
+        Public ReadOnly Property BonusLife() As Integer
+            Get
+                Return Stats.Base.Vitalite.Total + Stats.Vie.Total
+            End Get
+        End Property
+
+        Public ReadOnly Property MaximumLife() As Integer
+            Get
+                If Monster Then
+                    Return BonusLife + MyMonster.Level.VieMaximum
+                Else
+                    Return BonusLife + Level * 5 + 50
+                End If
+            End Get
+        End Property
+
+        Public ReadOnly Property Prospection() As Integer
+            Get
+                Return Math.Floor(Stats.Base.Chance.Total / 10) + Stats.Prospection.Total + 100
+            End Get
+        End Property
+
+        Public ReadOnly Property Initiative() As Integer
+            Get
+                Return (MaximumLife / 4 + Stats.Initiative.Total) * (Life / MaximumLife)
+            End Get
+        End Property
+
+        Public ReadOnly Property MaxPA() As Integer
+            Get
+                If Monster Then
+                    Return MyMonster.Level.MaxPA + Stats.PA.BaseTotal
+                Else
+                    Return If(Level > 100, 7, 6) + Stats.PA.BaseTotal
+                End If
+            End Get
+        End Property
+
+        Public ReadOnly Property RealMaxPA() As Integer
+            Get
+                If Monster Then
+                    Return MyMonster.Level.MaxPA + Stats.PA.TotalWithoutBoosts
+                Else
+                    Return If(Level > 100, 7, 6) + Stats.PA.TotalWithoutBoosts
+                End If
+            End Get
+        End Property
+
+        Public ReadOnly Property MaxPM() As Integer
+            Get
+                If Monster Then
+                    Return MyMonster.Level.MaxPM + Stats.PM.BaseTotal
+                Else
+                    Return 3 + Stats.PM.BaseTotal
+                End If
+            End Get
+        End Property
+
+        Public ReadOnly Property RealMaxPM() As Integer
+            Get
+                If Monster Then
+                    Return MyMonster.Level.MaxPM + Stats.PM.TotalWithoutBoosts
+                Else
+                    Return 3 + Stats.PM.TotalWithoutBoosts
+                End If
+            End Get
+        End Property
+
+        Public ReadOnly Property MaxPods() As Integer
+            Get
+                Return Stats.Base.Force.Total * 5 + 1000
+            End Get
+        End Property
+
+        Public ReadOnly Property EsquivePA() As Integer
+            Get
+                Dim Esq As Integer = Math.Floor(Stats.Base.Sagesse.Total / 4) + Stats.Armor.EsquivePA.BaseTotal
+                Return If(Esq > 0, Esq, 0)
+            End Get
+        End Property
+
+        Public ReadOnly Property EsquivePM() As Integer
+            Get
+                Dim Esq As Integer = Math.Floor(Stats.Base.Sagesse.Total / 4) + Stats.Armor.EsquivePM.BaseTotal
+                Return If(Esq > 0, Esq, 0)
+            End Get
+        End Property
+
+        Public Overrides Function ToString() As String
+            Dim Pattern As String = String.Empty
+
+            Pattern &= Exp & "," & ExperienceTable.AtLevel(Level).Character & "," & ExperienceTable.AtLevel(Level + 1).Character
+            Pattern &= "|" & Kamas & "|" & CharactPoint & "|" & SpellPoint
+            Pattern &= "|" & Alignment.ToString
+            Pattern &= "|" & Life & "," & MaximumLife()
+            Pattern &= "|" & Energy & ",10000"
+            Pattern &= "|" & Initiative() & "|" & Prospection()
+            Pattern &= "|" & MaxPA() & "," & Stats.PA.Items & ",0,0," & PA
+            Pattern &= "|" & MaxPM() & "," & Stats.PM.Items & ",0,0," & PM
+            Pattern &= "|" & Stats.Base.Force.ToString
+            Pattern &= "|" & Stats.Base.Vitalite.ToString
+            Pattern &= "|" & Stats.Base.Sagesse.ToString
+            Pattern &= "|" & Stats.Base.Chance.ToString
+            Pattern &= "|" & Stats.Base.Agilite.ToString
+            Pattern &= "|" & Stats.Base.Intelligence.ToString
+            Pattern &= "|" & Stats.PO.ToString
+            Pattern &= "|" & Stats.MaxInvocation.ToString
+            Pattern &= "|" & Stats.Damages.BonusDegats.ToString
+            Pattern &= "|" & Stats.Damages.BonusDegatsPhysique.ToString
+            Pattern &= "|" & Stats.Damages.BonusDegatsMagique.ToString
+            Pattern &= "|" & Stats.Damages.BonusDegatsPercent.ToString
+            Pattern &= "|" & Stats.Damages.BonusSoins.ToString
+            Pattern &= "|" & Stats.Damages.BonusDegatsPiege.ToString
+            Pattern &= "|" & Stats.Damages.BonusDegatsPiegePercent.ToString
+            Pattern &= "|" & Stats.Damages.RenvoiDegats.ToString
+            Pattern &= "|" & Stats.Damages.BonusCoupCritique.ToString
+            Pattern &= "|" & Stats.Damages.BonusEchecCritique.ToString
+            Pattern &= "|" & Stats.Armor.EsquivePA.ToString
+            Pattern &= "|" & Stats.Armor.EsquivePM.ToString
+            Pattern &= "|" & Stats.Armor.Resistances.Neutre.ToString
+            Pattern &= "|" & Stats.Armor.Resistances.PercentNeutre.ToString
+            Pattern &= "|" & Stats.Armor.ResistancesPvp.Neutre.ToString
+            Pattern &= "|" & Stats.Armor.ResistancesPvp.PercentNeutre.ToString
+            Pattern &= "|" & Stats.Armor.Resistances.Terre.ToString
+            Pattern &= "|" & Stats.Armor.Resistances.PercentTerre.ToString
+            Pattern &= "|" & Stats.Armor.ResistancesPvp.Terre.ToString
+            Pattern &= "|" & Stats.Armor.ResistancesPvp.PercentTerre.ToString
+            Pattern &= "|" & Stats.Armor.Resistances.Eau.ToString
+            Pattern &= "|" & Stats.Armor.Resistances.PercentEau.ToString
+            Pattern &= "|" & Stats.Armor.ResistancesPvp.Eau.ToString
+            Pattern &= "|" & Stats.Armor.ResistancesPvp.PercentEau.ToString
+            Pattern &= "|" & Stats.Armor.Resistances.Air.ToString
+            Pattern &= "|" & Stats.Armor.Resistances.PercentAir.ToString
+            Pattern &= "|" & Stats.Armor.ResistancesPvp.Air.ToString
+            Pattern &= "|" & Stats.Armor.ResistancesPvp.PercentAir.ToString
+            Pattern &= "|" & Stats.Armor.Resistances.Feu.ToString
+            Pattern &= "|" & Stats.Armor.Resistances.PercentFeu.ToString
+            Pattern &= "|" & Stats.Armor.ResistancesPvp.Feu.ToString
+            Pattern &= "|" & Stats.Armor.ResistancesPvp.PercentFeu.ToString
+            Pattern &= "|" & "1"
+
+            Return Pattern
+
+        End Function
+
+    End Class
+End Namespace

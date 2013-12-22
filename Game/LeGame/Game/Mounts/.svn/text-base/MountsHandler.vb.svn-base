@@ -1,0 +1,87 @@
+﻿Imports MySql.Data.MySqlClient
+Imports Vemu_gs.Utils
+Imports System.Linq
+
+Namespace Game
+    Public Class MountsHandler
+
+        Public Shared TemplateList As New Dictionary(Of Integer, MountTemplate)
+
+#Region "Getter"
+
+        Public Shared Function Exist(ByVal TemplateId As Integer) As Boolean
+            Return TemplateList.ContainsKey(TemplateId)
+        End Function
+
+        Public Shared Function GetTemplate(ByVal TemplateId As Integer) As MountTemplate
+            Return TemplateList(TemplateId)
+        End Function
+
+        Public Shared Function GetUpperBound(ByVal level As Integer) As Integer
+            Return ExperienceTable.AtLevel(level + 1).Mount
+        End Function
+
+        Public Shared Function GetLowerBound(ByVal level As Integer) As Integer
+            Return ExperienceTable.AtLevel(level).Mount
+        End Function
+
+        Public Shared Function GetLevel(ByVal exp As Integer) As Integer
+            Return ExperienceTable.Levels.First(Function(l) l.Value.Mount > exp).Key - 1
+        End Function
+
+#End Region
+
+#Region "Loading"
+
+        Public Shared Sub SetupMounts()
+
+            Utils.MyConsole.StartLoading("Loading mounts from database ...")
+
+            SyncLock Sql.OthersSync
+
+                TemplateList.Clear()
+
+                Dim SQLText As String = "SELECT * FROM mount_templates"
+                Dim SQLCommand As New MySqlCommand(SQLText, Sql.Others)
+
+                Dim Result As MySqlDataReader = SQLCommand.ExecuteReader
+
+                While Result.Read
+
+                    Dim NewMount As New MountTemplate
+
+                    NewMount.Id = Result("id")
+                    NewMount.StartPods = Result("start_pods")
+                    NewMount.LevelPods = Result("level_pods")
+                    NewMount.StartEnergy = Result("start_energy")
+                    NewMount.LevelEnergy = Result("level_energy")
+                    NewMount.MaxMaturity = Result("max_maturity")
+                    NewMount.GestationTime = Result("gestation_time")
+                    NewMount.LearnTime = Result("learn_time")
+
+                    NewMount.Stats = New List(Of ItemEffect)
+
+                    Dim Effects() As String = Result("Stats").ToString.Split(",")
+
+                    For Each Effect As String In Effects
+                        If Effect = "" Then Continue For
+                        NewMount.Stats.Add(ItemEffect.FromString(Nothing, Effect))
+                    Next
+
+                    TemplateList.Add(NewMount.Id, NewMount)
+
+                End While
+
+                Result.Close()
+
+            End SyncLock
+
+            Utils.MyConsole.StopLoading()
+            Utils.MyConsole.Status("'@" & TemplateList.Count & "@' mounts loaded from database")
+
+        End Sub
+
+#End Region
+
+    End Class
+End Namespace
